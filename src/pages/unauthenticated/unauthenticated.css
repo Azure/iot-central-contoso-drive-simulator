@@ -1,0 +1,38 @@
+.unauthpage {
+    margin-top: 8rem;
+    text-align: center;
+}
+
+.unauthpage h1 {
+    margin-bottom: 0.5rem;
+}
+
+.unauthpage .login {
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.unauthpage .login .form {
+    margin-top: 5rem;
+    width: 70%;
+}
+
+.unauthpage .loader {
+    margin-top: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    height: 5rem;
+}
+
+.unauthpage .loader h3 {
+    margin-bottom: 0.25rem;
+}
+
+.unauthpage .loader>div {
+    height: 2rem;
+}

@@ -1,0 +1,171 @@
+.authpage {
+    padding: 1rem;
+}
+
+.nav-bar {
+    height: 2.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.nav-bar h3 {
+    margin: 0;
+}
+
+.nav-mini-bar {
+    display: flex;
+    align-items: center;
+}
+
+.nav-mini-bar:nth-child(1) button {
+    padding: 3px 0;
+    margin-right: 0.5rem;
+}
+
+.nav-mini-bar:nth-child(2) {
+    width: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-mini-bar .btn-nav {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    font-size: 1.2rem;
+}
+
+.nav-mini-bar-icons {
+    width: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-mini-bar-icons span {
+    font-size: 0.7rem;
+}
+
+.nav-mini-bar>div {
+    height: 1.2rem;
+}
+
+.tracking {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.tracking-indicator {
+    width: 280px;
+    height: 280px;
+    -webkit-border-radius: 140px;
+    -moz-border-radius: 140px;
+    border-radius: 140px;
+    background: var(--success-color);
+}
+
+.tracking-content {
+    position: absolute;
+    max-width: 300px;
+    text-align: center;
+    margin-top: 1.8rem;
+}
+
+.tracking-content div:nth-child(1) {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tracking-content div:nth-child(2) {
+    margin-top: 0.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.tracking-content div:nth-child(3) {
+    margin-top: 1rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.tracking-content div:nth-child(4) {
+    margin-top: 1.5rem;
+    font-weight: 700;
+}
+
+.message {
+    margin-top: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 5.8rem;
+}
+
+.message>div:nth-child(1) {
+    font-size: 1.7rem;
+    font-weight: 700;
+}
+
+.message div:nth-child(2) {
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+.main-message div:nth-child(2) {
+    text-align: center;
+    width: 300px;
+    font-size: 1.4rem;
+}
+
+.info-message div:nth-child(2)>div {
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.info-message>div:nth-child(2) div:not(:last-child) {
+    margin-right: 1rem;
+}
+
+.info-bar {
+    margin-top: 0.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.info-bar span:first-child {
+    font-weight: 900;
+}
+
+.info-bar span:not(:last-child) {
+    margin-right: 4px;
+}
+
+.menu-bar {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.btn-menu {
+    cursor: pointer;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.btn-menu>div {
+    margin-bottom: 0.75rem;
+}
