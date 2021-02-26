@@ -101,27 +101,23 @@ The codebase is built on [create-react-app](https://createreactapp.github.io/) a
 ## Install
 
 ``` 
-
 npm ci
 ```
 
 ## Build
 
 ``` 
-
 npm run build
 ```
 
 ## Run
 
 ``` 
-
 npm start
 ````
 
 ## Use
 
 ``` 
-
 http://localhost:3001
 ````
