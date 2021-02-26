@@ -2,8 +2,7 @@
 
 Contoso-Drive is an example codebase and demonstration of an IoT Central companion experience. It's a codebase built around Fleet Management scenarios and leverages the Azure IoT Central REST APIs to communicate with the corresponding IoT Central applications.
 
-<div style="text-align:center; height:400px; margin:0 24px"><img src="images/hero.png" /></div>
-
+<p align="center"><img width="800px" src="images/hero.png" /></p>
 
 [Watch the video here](https://youtu.be/dO_sEZEgpFM)
 
@@ -19,17 +18,17 @@ The Contoso-Drive companion experience is split into three concepts
 
 __This repo represents the Driver App scenario.__ 
 
-<div style="text-align:center; height:300px; margin:16px 0 0 0"><img src="images/concepts.png" /></div>
+<p align="center"><img width="800px" src="images/concepts.png" /></p>
 
 ## Learning path
-To get up and running with the full Contoso-Drive experience, visit the learning path [here](https://github.com/iot-for-all/learn-iotc-companion-apps). This is the best place to start with Contoso-Drive
 
+To get up and running with the full Contoso-Drive experience, visit the learning path [here](https://github.com/iot-for-all/learn-iotc-companion-apps). This is the best place to start with Contoso-Drive
 
 # The Driver App codebase
 
 The codebase is a browser based device simulator that mimics some of the telemetry typically sent as vehicle telematics. The driver app is an authenticated experience which allows it to communicate with IoT Central. This also enables expansion into other systems requiring the same identity. To learn more about browser based device simulation visit [this](https://github.com/iot-for-all/iot-central-web-mqtt-device) repro
 
-<div style="text-align:center; height:300px; margin:24px"><img src="images/figure2.png" /></div>
+<p align="center"><img width="300px" src="images/figure2.png" /></p>
 
 # Usage
 
@@ -46,6 +45,7 @@ There are a few steps that need to be completed before running the code.
   You will need to have an AAD application so that an authenticated user can be authorized to use IoT Central APIs. If you have setup the support portal already, you can share the same AAD application. If you need to setup a new or different AAD application, use the following repo to guide you [Setting up an AAD application to work with IoT Central](https://github.com/iot-for-all/iotc-aad-setup) Once you have an AAD application, change [config.ts](/src/config.ts) file and update the following
 
 ``` 
+
 AADClientID: '<YOUR AAD APPLICATION CLIENT ID HERE>',
 AADDirectoryID: '<YOUR ADD APPLICATION DIRECTORY ID HERE>',
 ```
@@ -56,7 +56,8 @@ Once these steps are completed, build the code and run.
 
 On first run you will need to setup the application host name and device id that this simulator will be using. You will also need to sign in with the same user identity added through the support portal.
 
-<div style="text-align:center; height:300px; margin:24px"><img src="images/figure1.png" /></div>
+<p align="center"><img width="300px" src="images/figure1.png" /></p>
+
 When a user is added through the support portal, the application host name (and device id will be provided) Once these fields are completed you will not need to set them again. To clear these values, clear the local storage for the browser instance or sign-out of the application.
 
 Because this is a web app you can run multiple instances of the simulator with each using its own (user) identity and each using an incognito browser. Therefore each instance can and should have it's own application host and device id.
@@ -69,7 +70,7 @@ Once you have provided valid credentials, you will not need to re-provide these 
 
 Once the app has been setup and is running, it displays a dashboard of information of the telemetry being sent. There are no interactions on this screen other than the ability to sign out. Below indicates what parts of the dashboard are real/simulated and which parts are purely cosmetic.
 
-<div style="text-align:center; height:400px; margin:24px"><img src="images/figure3.png" /></div>
+<p align="center"><img width="500px" src="images/figure3.png" /></p>
 
 ## Simulated device data
 
@@ -100,22 +101,27 @@ The codebase is built on [create-react-app](https://createreactapp.github.io/) a
 ## Install
 
 ``` 
+
 npm ci
 ```
 
 ## Build
 
 ``` 
+
 npm run build
 ```
+
 ## Run
 
 ``` 
+
 npm start
 ````
 
 ## Use
 
 ``` 
+
 http://localhost:3001
 ````
