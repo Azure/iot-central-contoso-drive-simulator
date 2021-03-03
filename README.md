@@ -1,12 +1,13 @@
-# Contoso-Drive Driver App
+# Contoso-Drive Driver Application
+This repo is an IoT Central companion experience which is part of a set of repos demonstrating a Fleet Management scenario. To get up and running with the full experience, visit the Learning Path [here](https://github.com/iot-for-all/learn-iotc-companion-apps).
+
+## Companion experience overview
 
 Contoso-Drive is an example codebase and demonstration of an IoT Central companion experience. It's a codebase built around Fleet Management scenarios and leverages the Azure IoT Central REST APIs to communicate with the corresponding IoT Central applications.
 
-<p align="center"><img width="800px" src="images/hero.png" /></p>
+<p align="center"><img width="600px" src="images/hero.png" /></p>
 
-[Watch the video here](https://youtu.be/dO_sEZEgpFM)
-
-# Companion experience overview
+[Watch a video of the Contoso-Drive experience here](https://youtu.be/dO_sEZEgpFM)
 
 The Contoso-Drive companion experience is split into three concepts
 
@@ -14,27 +15,23 @@ The Contoso-Drive companion experience is split into three concepts
 
 * __The Driver App.__ This application represents the device that sends the vehicle's telematics to IoT Central which is subsequently available in the Support Portal. Typically this is a phone acting as a gateway and is run on the driver's mobile phone or an internet accessible device.
 
-* __The IoT Central application(s).__ The main experience to manage the Contoso-Drive devices and admin level tasks for Contoso-Drive. It is typically used by the technician/support person and other privileged persons to perform admin level device management, insights and actions.
+* __The IoT Central application(s).__ The main experience to manage the Contoso-Drive devices and admin level tasks for Contoso-Drive. It is typically used by the technician/support person and other privileged persons to perform admin level device management, insights and actions. Visit [this](https://github.com/iot-for-all/iotc-contso-drive-learning) repo to see the Learning Path on how to set up the Contoso-Drive IoT Central applications.
 
 __This repo represents the Driver App scenario.__ 
 
-<p align="center"><img width="800px" src="images/concepts.png" /></p>
-
-## Learning path
-
-To get up and running with the full Contoso-Drive experience, visit the learning path [here](https://github.com/iot-for-all/learn-iotc-companion-apps). This is the best place to start with Contoso-Drive
+<p align="center"><img width="600px" src="images/concepts.png" /></p>
 
 # The Driver App codebase
 
-The codebase is a browser based device simulator that mimics some of the telemetry typically sent as vehicle telematics. The driver app is an authenticated experience which allows it to communicate with IoT Central. This also enables expansion into other systems requiring the same identity. To learn more about browser based device simulation visit [this](https://github.com/iot-for-all/iot-central-web-mqtt-device) repro
+The codebase is a SPA application that runs 100% in the browser. There is no server side API component. The code is a browser based device simulator that mimics some of the telemetry typically sent as vehicle telematics. The driver app is an authenticated experience which allows it to communicate with IoT Central. This also enables expansion into other systems requiring the same identity. To learn more about browser based device simulation visit [this](https://github.com/iot-for-all/iot-central-web-mqtt-device) repo.
 
-<p align="center"><img width="300px" src="images/figure2.png" /></p>
+<p align="center"><img width="200px" src="images/figure2.png" /></p>
 
 # Usage
 
 ## Setup
 
-There are a few steps that need to be completed before running the code.
+There are a couple of steps that need to be completed before running the code.
 
 * __Use the Contoso-Drive Support portal application to create and register a user__; 
 
@@ -42,13 +39,12 @@ There are a few steps that need to be completed before running the code.
 
 * __Configure the AAD application__; 
 
-  You will need to have an AAD application so that an authenticated user can be authorized to use IoT Central APIs. If you have setup the support portal already, you can share the same AAD application. If you need to setup a new or different AAD application, use the following repo to guide you [Setting up an AAD application to work with IoT Central](https://github.com/iot-for-all/iotc-aad-setup) Once you have an AAD application, change [config.ts](/src/config.ts) file and update the following
+  You will need to have an AAD application so that an authenticated user can be authorized to use IoT Central APIs. If you have setup the support portal already, you can share the same AAD application. If you need to setup a new or different AAD application, use the following repo to guide you [Setting up an AAD application to work with IoT Central](https://github.com/iot-for-all/iotc-aad-setup) Once you have an AAD application, change the [config.ts](/src/config.ts) file and update the following.
 
-``` 
-
-AADClientID: '<YOUR AAD APPLICATION CLIENT ID HERE>',
-AADDirectoryID: '<YOUR ADD APPLICATION DIRECTORY ID HERE>',
-```
+  ``` 
+  AADClientID: '<YOUR AAD APPLICATION CLIENT ID HERE>',
+  AADDirectoryID: '<YOUR ADD APPLICATION DIRECTORY ID HERE>',
+  ```
 
 Once these steps are completed, build the code and run.
 
@@ -56,7 +52,7 @@ Once these steps are completed, build the code and run.
 
 On first run you will need to setup the application host name and device id that this simulator will be using. You will also need to sign in with the same user identity added through the support portal.
 
-<p align="center"><img width="300px" src="images/figure1.png" /></p>
+<p align="center"><img width="200px" src="images/figure1.png" /></p>
 
 When a user is added through the support portal, the application host name (and device id will be provided) Once these fields are completed you will not need to set them again. To clear these values, clear the local storage for the browser instance or sign-out of the application.
 
@@ -74,7 +70,7 @@ Once the app has been setup and is running, it displays a dashboard of informati
 
 ## Simulated device data
 
-The device that is being simulated has 2 types of data flow
+The device that is being simulated has 2 types of data flow.
 
 __Data being sent__
 
@@ -88,40 +84,35 @@ __Data that can be received__
 * Debug; A flag that simulates switching the device's into diagnostics mode
 * Reboot; A command that simulates a reboot action 
 
-The app does not remember its previous run state. Every restart or F5 press will result in a re-initialization
+The app does not remember its previous run state. Every restart or F5 press will result in a re-initialization.
 
 ## Using a custom simulator
 
-Because the driver app is just a device that uses regular Azure IoT Hub conventions, any simulator that knows the device's model can perform the D2C/C2D activities. Review the code to understand the capabilities that need to be implemented.
+Because the driver app is just a device that uses regular Azure IoT Hub conventions, any simulator that knows the device's model can perform the D2C/C2D activities. Review the code to understand the capabilities that need to be implemented. Optionally, the [Learning Path](https://github.com/iot-for-all/learn-iotc-companion-apps) outlines how to use [mock-devices](https://github.com/codetunez/mock-devices) to provide better scaled simulation data without the need for user credentials.
 
 # Installing, building and running the codebase
 
-The codebase is built on [create-react-app](https://createreactapp.github.io/) and therefore implements the same react-scripts. If you are not familiar with it visit the site for more details
+The codebase is built on [create-react-app](https://createreactapp.github.io/) and therefore implements the same react-scripts. If you are not familiar with it visit the site for more details.
 
 ## Install
 
 ``` 
-
 npm ci
 ```
 
 ## Build
 
 ``` 
-
 npm run build
 ```
 
 ## Run
 
 ``` 
-
 npm start
 ````
 
 ## Use
-
 ``` 
-
 http://localhost:3001
 ````
