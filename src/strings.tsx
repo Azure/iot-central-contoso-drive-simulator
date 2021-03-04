@@ -19,23 +19,30 @@ export const RESX = {
         "btnRequest": "Request Assistance",
         "btnHos": "HoS",
         "btnInspection": "Inspection",
+        "model": "CONDRV1001",
+        "serial": "0000",
         "tracking": {
-            "onTrack": "You are on track",
-            "offTrack": "You are off track",
-            "miles": "miles left"
-        },
-        "delivery": {
-            "address": "No delivery address",
+            "area": "Area ",
             "location": "Initializing",
-            "current": "Waiting..."
+            "track_ok": "You are on track",
+            "track_bad": "You are on track",
+            "track_error": "ERROR 101ABC",
+            "miles": "miles left",
+            "miles_unknown": "Initializing",
         },
+        "destination": "Not yet known",
         "icons": {
             "connecting": "Connecting",
             "connected": "Connected",
             "battery": "Battery",
             "location": "Location"
         },
-        "area": "Area ",
+        "hidden": {
+            "btnFaulty_label": "Break Application",
+            "btnFaulty_title": "Send reboot() command to fix device or refresh the page",
+            "btnFaulty": "Cause Error!",
+            "area_label": "Change Area"
+        },
         "info": {
             "device": "Device ID",
             "host": "APP"

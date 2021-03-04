@@ -12,60 +12,58 @@ export function getRndInteger(min, max) {
 
 // this creates a real device client in the browser
 async function browserDevice(deviceId, scopeId, sasKey, desiredCB, methodCB, disconnectCB) {
-    const dpsClient = new AzDpsClient(scopeId, deviceId, sasKey);
-    const result = await dpsClient.registerDevice();
-    if (result.status === 'assigned') {
-        const host = result.registrationState.assignedHub;
+    return new Promise(async (resolve, reject) => {
+        const dpsClient = new AzDpsClient(scopeId, deviceId, sasKey);
+        const result = await dpsClient.registerDevice();
+        if (result.status === 'assigned') {
+            const host = result.registrationState.assignedHub;
 
-        const client = new AzIoTHubClient(host, deviceId, sasKey);
-        client.setDirectMehodCallback((method, payload, rid) => {
-            methodCB(method, payload, rid);
-        })
-        client.setDesiredPropertyCallback(desired => {
-            desiredCB(JSON.parse(desired || ''));
-        })
-        client.disconnectCallback = (err) => {
-            disconnectCB(err);
+            const client = new AzIoTHubClient(host, deviceId, sasKey);
+            client.setDirectMehodCallback((method, payload, rid) => {
+                methodCB(method, payload, rid);
+            })
+            client.setDesiredPropertyCallback(desired => {
+                desiredCB(JSON.parse(desired || ''));
+            })
+            client.disconnectCallback = (err) => {
+                disconnectCB(err);
+            }
+
+            await client.connect();
+            resolve(client);
         }
+        reject(null);
+    });
 
-        await client.connect();
-        return client;
-    }
-    return null;
 }
 
 export class DeviceProvider extends React.PureComponent {
 
     constructor(props: any) {
         super(props);
-        this.state.area = getRndInteger(0, 4);
-        this.state.location = Locations[this.state.area];
+        this.state.area = getRndInteger(0, 2);
+        this.state.geo = Locations[this.state.area];
         console.log('Device is in area: ' + this.state.area);
     }
 
-    connect = (deviceId: string, scopeId: string, sasKey: string) => {
-        browserDevice(deviceId, scopeId, sasKey, this.setDesired, this.setMethod, this.disconnect)
-            .then((res: any) => {
-                console.log('Connected as Device Id: ' + deviceId);
+    connect = async (deviceId: string, scopeId: string, sasKey: string) => {
 
-                setTimeout(() => {
-                    // this timeout will fetch the twin
-                    if (!res) {
-                        console.log('Failed to fetch twin for initialization data');
-                        return;
-                    }
+        if (this.state.connected) { return; }
 
-                    res.getTwin().then((res2) => {
-                        this.setState({ desired: res2.desired });
-                    });
-                }, 2000);
+        const res: any = await browserDevice(deviceId, scopeId, sasKey, this.setDesired, this.setMethod, this.disconnect)
+        if (res) {
+            console.log('Connected as Device Id: ' + deviceId);
 
-                this.setState({
-                    client: res, connected: true, device: {
-                        deviceId, scopeId, sasKey
-                    }
-                })
-            });
+            const twinRes = await res.getTwin();
+            this.setState({ desired: twinRes.desired });
+            console.log('Fetch twin: ' + JSON.stringify(twinRes.desired));
+
+            this.setState({
+                client: res, connected: true, device: {
+                    deviceId, scopeId, sasKey
+                }
+            })
+        };
     }
 
     disconnect = (err) => {
@@ -95,11 +93,20 @@ export class DeviceProvider extends React.PureComponent {
     sendTelemetry = (payload: any) => {
         if (!this.state.client) { console.log('Send telemetry not ready'); return; }
         this.state.client.sendTelemetry(JSON.stringify(payload));
+        console.log('Sent telemetry: ' + JSON.stringify(payload));
     }
 
     sendTwinReported = (payload: any) => {
         if (!this.state.client) { console.log('Send twin not ready'); return; }
         this.state.client.updateTwin(JSON.stringify(payload));
+        console.log('Sent twin: ' + JSON.stringify(payload));
+    }
+
+    changeArea = (area: number) => {
+        this.setState({
+            area,
+            geo: Locations[area]
+        })
     }
 
     state: any = {
@@ -109,11 +116,12 @@ export class DeviceProvider extends React.PureComponent {
         method: {},
         device: {},
         area: 0,
-        location: {},
+        geo: {},
         connect: this.connect,
         sendTelemetry: this.sendTelemetry,
         sendTwinReported: this.sendTwinReported,
-        completeMethod: this.completeMethod
+        completeMethod: this.completeMethod,
+        changeArea: this.changeArea
     }
 
     render() {

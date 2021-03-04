@@ -69,6 +69,10 @@
     background: var(--success-color);
 }
 
+.tracking-indicator-err {
+    background: var(--error-color);
+}
+
 .tracking-content {
     position: absolute;
     max-width: 300px;
@@ -91,6 +95,7 @@
     margin-top: 1rem;
     font-size: 2.5rem;
     font-weight: 700;
+    width: 99%;
 }
 
 .tracking-content div:nth-child(4) {
@@ -168,4 +173,36 @@
 
 .btn-menu>div {
     margin-bottom: 0.75rem;
+}
+
+.hidden-stuff {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+}
+
+.btn-hidden {
+    cursor: pointer;
+    background: var(--bright-color);
+    padding: 0.5rem;
+    border: solid 1px var(--bright-color);
+}
+
+.btn-hidden:hover {
+    background: var(--error-color);
+    color: var(--bright-color);
+}
+
+.sel-hidden {
+    padding: 0.5rem;
+    border: solid 1px var(--bright-color);
+}
+
+@media only screen and (max-width: 1200px) {
+    .hidden-stuff {
+        display: none;
+    }
 }

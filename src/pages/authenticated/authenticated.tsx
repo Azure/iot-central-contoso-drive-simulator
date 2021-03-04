@@ -14,6 +14,18 @@ import React from 'react';
 
 /* UX */
 
+const locations = [
+    { name: 'US West', value: 0 },
+    { name: 'US East', value: 1 },
+    { name: 'Zurich Europe', value: 2 },
+    { name: 'Atlantic Ocean', value: 3 },
+    { name: 'WA - Bainbridge', value: 4 },
+    { name: 'WA - Tacamoa', value: 5 },
+    { name: 'WA - Seattle', value: 6 },
+    { name: 'WA - Everett', value: 7 },
+    { name: 'WA - Northbend', value: 8 }
+]
+
 function convertIcon(type: string) {
     if (type === 'info') {
         return <FontAwesomeIcon icon={Icons.faInfoCircle} color={Styles.infoColor} />;
@@ -25,7 +37,15 @@ function convertIcon(type: string) {
     return null;
 }
 
-function Page({ authContext, deviceContext, journey, info, connected }) {
+export const Combo: React.FunctionComponent<any> = ({ name, value, items, className, onChange }) => {
+    return <select className={className} name={name} onChange={onChange} value={value}>
+        {items.map(function (item: any, index: number) {
+            return <option key={index + 1} value={item.value}>{item.name}</option>
+        })}
+    </select>
+}
+
+function Page({ authContext, deviceContext, data, causeError }) {
     return <div className='authpage'>
         <div className='nav-bar'>
             <div className='nav-mini-bar'>
@@ -42,29 +62,31 @@ function Page({ authContext, deviceContext, journey, info, connected }) {
                     <span>{RESX.auth.icons.location}</span>
                 </div>
                 <div className='nav-mini-bar-icons'>
-                    <div><FontAwesomeIcon icon={Icons.faWifi} color={connected ? Styles.brightColor : Styles.brightColorDim} /></div>
-                    <span>{connected ? RESX.auth.icons.connected : RESX.auth.icons.connecting}</span>
+                    <div><FontAwesomeIcon icon={Icons.faWifi} color={data.connection ? Styles.brightColor : Styles.brightColorDim} /></div>
+                    <span>{data.connection ? RESX.auth.icons.connected : RESX.auth.icons.connecting}</span>
                 </div>
             </div>
         </div>
-        <div className='tracking'>
-            <div className='tracking-indicator'></div>
-            <div className='tracking-content'>
-                <div>{RESX.auth.area} {deviceContext.area}</div>
-                <div>{journey.location}</div>
-                <div>{RESX.auth.tracking.onTrack}</div>
 
-                <div><span>{journey.miles}</span> <span>{RESX.auth.tracking.miles}</span></div>
+        <div className='tracking'>
+            <div className={'tracking-indicator' + (data.inError ? " tracking-indicator-err" : "")}></div>
+            <div className='tracking-content'>
+                <div>{locations[deviceContext.area].name}</div>
+                <div>{data.journey.location}</div>
+                <div>{data.inError ? RESX.auth.tracking.track_error : RESX.auth.tracking.track_ok}</div>
+                <div>{data.journey.miles}</div>
             </div>
         </div>
+
         <div className='message main-message'>
             <div>{RESX.auth.mainMessage}</div>
-            <div>{journey.address}</div>
+            <div>{data.journey.destination}</div>
         </div>
+
         <div className='message info-message'>
             <div>{RESX.auth.infoMessage}</div>
             <div>
-                {info && info.map((item, index) => {
+                {data.messages && data.messages.map((item, index) => {
                     return <div key={index}>
                         <div>{convertIcon(item.type)}</div>
                         <div>{item.msg}</div>
@@ -72,6 +94,7 @@ function Page({ authContext, deviceContext, journey, info, connected }) {
                 })}
             </div>
         </div>
+
         <div className='menu-bar'>
             <button className='btn-primary btn-menu' disabled={true}>
                 <div><FontAwesomeIcon icon={Icons.faQuestionCircle} size={'2x'} color={Styles.brightColor} /></div>
@@ -97,7 +120,95 @@ function Page({ authContext, deviceContext, journey, info, connected }) {
                 <span>{authContext.applicationHost}</span>
             </div>
         </div>
+
+        <div className='hidden-stuff'>
+            <>
+                <label>{RESX.auth.hidden.btnFaulty_label}</label>
+                <button title={RESX.auth.hidden.btnFaulty_title} className='btn-hidden' onClick={() => { causeError() }}>{RESX.auth.hidden.btnFaulty}</button>
+                <br />
+                <label>{RESX.auth.hidden.area_label}</label>
+                <Combo name="area" value={deviceContext.area} items={locations} className='sel-hidden' onChange={(e) => deviceContext.changeArea(e.target.value)} />
+            </>
+        </div>
     </div>
+}
+
+interface State {
+    data: any,
+}
+
+interface Action {
+    type: any;
+    payload: any;
+}
+
+// Only show 2 messages at a time because of UX space
+const reduceMessages = (clear: boolean, oldMessages: Array<any>, newMessages: Array<any>) => {
+    if (clear) { oldMessages = [] }
+    newMessages = oldMessages.concat(newMessages);
+    if (newMessages.length > 2) {
+        newMessages.splice(0, newMessages.length - 2);
+    }
+    return newMessages;
+}
+
+// The reducer the mutates the state for the page
+const reducer = (state: State, action: Action) => {
+
+    const newData = Object.assign({}, state.data);
+
+    switch (action.type) {
+        case "connection":
+            if (action.payload.authContext.authenticated && action.payload.authContext.initialized) {
+                action.payload.deviceContext.connect(action.payload.authContext.deviceId,
+                    action.payload.authContext.deviceCredentials.idScope,
+                    action.payload.authContext.deviceCredentials.symmetricKey.primaryKey);
+                newData.connection = true
+            }
+            return { ...state, data: newData }
+        case "telemetry":
+            if (newData.inError) { return state; }
+            newData.telemetry = action.payload.telemetry;
+            newData.journey.location = action.payload.telemetry.location;
+            newData.journey.miles = action.payload.telemetry.miles + ' ' + RESX.auth.tracking.miles;
+            if (action.payload.delivery) {
+                const randomPoint = randomLocation.randomCirclePoint({ longitude: action.payload.context.geo.longitude, latitude: action.payload.context.geo.latitude }, action.payload.context.geo.radius);
+                const address = reverse.lookup(randomPoint.latitude, randomPoint.longitude, 'us');
+                newData.journey.destination = `Contoso Foo Factory, ${address.city ? address.city + ', ' : ''}${address.zipcode}, ${address.state_abbr}`;
+            }
+            action.payload.context.sendTelemetry({
+                fuel: action.payload.telemetry.fuel,
+                battery: action.payload.telemetry.battery,
+                miles: action.payload.telemetry.miles,
+                temperature: action.payload.telemetry.temperature,
+                location: action.payload.telemetry.geo
+            });
+            return { ...state, data: newData }
+        case "start-reboot":
+            newData.messages = reduceMessages(true, newData.messages, [{ type: 'warning', msg: 'Starting reboot' }]);
+            return { ...state, data: newData }
+        case "end-reboot":
+            if (newData.inError) {
+                const randomPoint = randomLocation.randomCirclePoint({ longitude: action.payload.context.geo.longitude, latitude: action.payload.context.geo.latitude }, action.payload.context.geo.radius);
+                const address = reverse.lookup(randomPoint.latitude, randomPoint.longitude, 'us');
+                newData.journey.destination = `Contoso Foo Factory, ${address.city ? address.city + ', ' : ''}${address.zipcode}, ${address.state_abbr}`;
+                newData.inError = false;
+            }
+            newData.messages = reduceMessages(true, newData.messages, [{ type: 'info', msg: 'Reboot completed' }]);
+            const method = Object.assign({}, action.payload.context.method);
+            action.payload.context.completeMethod(method.name, {}, method.rid, 200);
+            return { ...state, data: newData }
+        case "messages":
+            newData.messages = reduceMessages(action.payload.clear, newData.messages, action.payload.messages);
+            return { ...state, data: newData }
+        case "error":
+            newData.inError = true;
+            newData.messages = reduceMessages(true, newData.messages, [{ type: 'error', msg: 'Device has a problem' }]);
+            newData.journey = { miles: RESX.auth.tracking.miles_unknown, location: "????", destination: "???????????", faulty: true, };
+            return { ...state, data: newData }
+        default:
+            return state;
+    }
 }
 
 /* Render */
@@ -106,62 +217,79 @@ export default function Authenticated() {
 
     const authContext: any = React.useContext(AuthContext);
     const deviceContext: any = React.useContext(DeviceContext);
-    const [connecting, setConnecting] = React.useState(false);
-    const [sending, setSending] = React.useState(false);
 
-    const location = deviceContext.location;
+    const [time, setTimer] = React.useState(0);
 
-    const [journey, setJourney] = React.useState({
-        miles: 0,
-        address: RESX.auth.delivery.address,
-        location: RESX.auth.delivery.location
+    const [state, dispatch] = React.useReducer(reducer, {
+        data: {
+            connection: false,
+            inError: false,
+            journey: {
+                miles: RESX.auth.tracking.miles_unknown,
+                location: RESX.auth.tracking.location,
+                destination: RESX.auth.destination
+            },
+            telemetry: {
+                battery: getRndInteger(90, 100),
+                fuel: getRndInteger(50, 100),
+                miles: getRndInteger(25, 75),
+                temperature: getRndInteger(70, 75),
+                geo: deviceContext.geo,
+            },
+            messages: [{ type: 'info', msg: 'Device is ready' }]
+        }
     })
 
-    const [journeyErrorMessages, setJourneyMessages] = React.useState([
-        { type: 'info', msg: 'Device is ready' }
-    ]);
+    // Setup up a timer that fires every 45 seconds. This is the device's run loop
+    React.useEffect(() => {
+        dispatch({ type: 'connection', payload: { authContext, deviceContext } });
+        const timer = window.setInterval(() => {
+            setTimer(time => time + 1);
+        }, 45000);
+        return () => {
+            window.clearInterval(timer);
+        };
+        // eslint-disable-next-line
+    }, []);
 
-    const showMessages = (messages: any, clear: boolean) => {
-        let msgs: Array<any> = clear ? [] : journeyErrorMessages.slice();
-        msgs = msgs.concat(messages);
-        if (msgs.length > 2) {
-            for (let i = 1; i < msgs.length; i++) {
-                msgs.pop();
-            }
-        }
-        setJourneyMessages(msgs);
+    // Hidden UI to make the device look like its in a bad state
+    const generateError = () => {
+        dispatch({ type: 'error', payload: null });
     }
 
-    React.useEffect(() => {
-        const randomPoint = randomLocation.randomCirclePoint({ longitude: location.longitude, latitude: location.latitude }, location.radius);
+    // Generate the telemetry payload that is sent down the wire
+    const generateTelemetry = () => {
+        const fuel = Math.floor(state.data.telemetry.fuel < 0 ? 0 : (state.data.telemetry.fuel - state.data.telemetry.fuel * 0.01));
+        const battery = Math.floor(state.data.telemetry.battery < 0 ? 0 : (state.data.telemetry.battery - state.data.telemetry.battery * 0.01));
+        const miles = Math.floor(state.data.telemetry.miles < 0 ? 0 : (state.data.telemetry.miles - state.data.telemetry.miles * 0.01));
+        const temperature = Math.floor(state.data.telemetry.temperature + (state.data.telemetry.temperature * (getRndInteger(1, 3) / 100)));
+        const randomPoint = randomLocation.randomCirclePoint({ longitude: deviceContext.geo.longitude, latitude: deviceContext.geo.latitude }, deviceContext.geo.radius);
         const address = reverse.lookup(randomPoint.latitude, randomPoint.longitude, 'us');
-        const currentLocation = `Contoso Foo Factory, ${address.city ? address.city + ', ' : ''}${address.zipcode}, ${address.state_abbr}`;
-        setJourney({
-            miles: getRndInteger(45, 75),
-            address: currentLocation,
-            location: RESX.auth.delivery.current
-        })
-    }, [location])
+        const location = `${address.city ? address.city + ', ' : ''}${address.zipcode}`
 
-    // Connect the device
-    React.useEffect(() => {
-        if (connecting) { return; }
-        if (authContext.authenticated && authContext.initialized) {
-            deviceContext.connect(authContext.deviceId,
-                authContext.deviceCredentials.idScope,
-                authContext.deviceCredentials.symmetricKey.primaryKey);
+        return {
+            fuel,
+            battery,
+            miles,
+            temperature,
+            location,
+            geo: {
+                lat: randomPoint.latitude,
+                lon: randomPoint.longitude,
+                alt: 100
+            }
         }
-        setConnecting(true);
-        // eslint-disable-next-line
-    }, [authContext]);
+    }
 
     // react to a desired being sent
     React.useEffect(() => {
         const msgs: any = [];
         let clear: boolean = false;
+
         if (deviceContext.desired.hasOwnProperty('message')) {
             msgs.push({ type: 'info', msg: deviceContext.desired['message'] })
         }
+
         if (deviceContext.desired.hasOwnProperty('debug')) {
             const debug = deviceContext.desired['debug'];
             if (debug || debug === false) {
@@ -172,93 +300,47 @@ export default function Authenticated() {
                 }
             }
         }
-        showMessages(msgs, clear);
+        dispatch({ type: 'messages', payload: { clear: clear, messages: msgs } })
         // eslint-disable-next-line
     }, [deviceContext.desired])
 
     // react to a method being sent
     React.useEffect(() => {
         if (deviceContext.method.name && (deviceContext.method.name === 'reboot' || deviceContext.method.name === 'firmware')) {
-            const method = Object.assign({}, deviceContext.method);
-            showMessages([{ type: 'warning', msg: 'Starting reboot' }], true);
+            dispatch({ type: 'start-reboot', payload: null })
             setTimeout(() => {
-                showMessages([{ type: 'info', msg: 'Reboot completed' }], true);
-                deviceContext.completeMethod(method.name, {}, method.rid, 200);
+                dispatch({ type: 'end-reboot', payload: { context: deviceContext } })
             }, 5000)
         }
         // eslint-disable-next-line
     }, [deviceContext.method])
 
-    // main reporting loop
+    // This will only happen when the device initially connects
     React.useEffect(() => {
-        if (sending) { return; }
-        if (!deviceContext.connected) {
-            if (sending) { reset(); }
-            return;
-        }
-
-        // these are the interval state that will be mainted through the loops
-        let battery = getRndInteger(90, 100);
-        let fuel = getRndInteger(50, 100);
-        let miles: number = journey.miles;
-
-        let timer, timer2: any = null;
-        timer = setInterval(() => {
-
-            const randomPoint = randomLocation.randomCirclePoint({ longitude: location.longitude, latitude: location.latitude }, location.radius);
-            battery = Math.floor(battery < 0 ? 0 : (battery - battery * 0.01));
-            fuel = Math.floor(fuel < 0 ? 0 : (fuel - fuel * 0.01));
-            miles = Math.floor(miles < 0 ? 0 : (miles - miles * 0.01));
-
-            const json = {
-                battery,
-                miles,
-                'location': {
-                    'lat': randomPoint.latitude,
-                    'lon': randomPoint.longitude,
-                    'alt': 50
-                }
-            }
-
-            const address = reverse.lookup(json.location.lat, json.location.lon, 'us');
-            const currentLocation = `${address.city ? address.city + ', ' : ''}${address.zipcode}, ${address.state_abbr}`
-
-            deviceContext.sendTelemetry(json);
-            console.log('Sent telemetry: ' + JSON.stringify(json));
-            setJourney(Object.assign({}, journey, {
-                miles: json.miles,
-                location: currentLocation
-            }));
-        }, 60000);
-
-        timer2 = setInterval(() => {
-            const json = { 'fuel': fuel };
-            deviceContext.sendTelemetry(json);
-            console.log('Sent reported: ' + JSON.stringify(json));
-        }, 60001 * 3);
-
-        // report only
+        if (!deviceContext.connected) { return; }
         const json = {
             'message': 'Started',
-            'lastConnected': new Date(Date.now()).toISOString()
+            'lastConnected': new Date(Date.now()).toISOString(),
+            'model': RESX.auth.model,
+            'serial': RESX.auth.serial + getRndInteger(1000, 9000)
         }
-
         deviceContext.sendTwinReported(json);
-        console.log('Sent initial twin: ' + JSON.stringify(json));
 
-        // keep internal state and let setIntervals send data
-        setSending(true);
-        function reset() {
-            clearInterval(timer);
-            clearInterval(timer2);
-            setSending(false);
-        }
+        if (!deviceContext.connected) { return; }
+        const telemetry = generateTelemetry();
+        dispatch({ type: 'telemetry', payload: { telemetry, context: deviceContext, delivery: true } });
 
-        return () => {
-            reset();
-        };
         // eslint-disable-next-line
     }, [deviceContext.connected]);
 
-    return <Page authContext={authContext} deviceContext={deviceContext} journey={journey} info={journeyErrorMessages} connected={sending} />
+
+    // The reaction to the timer tick
+    React.useEffect(() => {
+        if (!deviceContext.connected) { return; }
+        const telemetry = generateTelemetry();
+        dispatch({ type: 'telemetry', payload: { telemetry, context: deviceContext, delivery: false } });
+        // eslint-disable-next-line
+    }, [time]);
+
+    return <Page authContext={authContext} deviceContext={deviceContext} data={state.data} causeError={generateError} />
 }
