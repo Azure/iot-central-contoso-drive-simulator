@@ -1,13 +1,16 @@
 # Contoso-Drive Driver Application
-This repo is an IoT Central companion experience which is part of a set of repos demonstrating a Fleet Management scenario. To get up and running with the full experience, visit the Learning Path [here](https://github.com/iot-for-all/contoso-drive-learning).
+This repo is an IoT Central companion experience which is part of a set of repos demonstrating a Fleet Management scenario. To get up and running with the full experience, visit the Learning Path [here](https://github.com/iot-for-all/companion-experiences-learning).
 
 ## Companion experience overview
+Watch a 5 minute overview of the experience
+
+[![IoT Central Companion Experience - Contoso Drive](/images/yt_thumb.png)](https://youtu.be/_6woSCJfk4I)
 
 Contoso-Drive is an example codebase and demonstration of an IoT Central companion experience. It's a codebase built around Fleet Management scenarios and leverages the Azure IoT Central REST APIs to communicate with the corresponding IoT Central applications.
 
 <p align="center"><img width="600px" src="images/hero.png" /></p>
 
-[Watch a video of the Contoso-Drive experience here](https://youtu.be/icILa3Bdc28)
+[Watch a video of the Contoso-Drive experience here](https://youtu.be/_6woSCJfk4I)
 
 The Contoso-Drive companion experience is split into three concepts
 
@@ -15,7 +18,7 @@ The Contoso-Drive companion experience is split into three concepts
 
 * __The Driver App.__ This application represents the device that sends the vehicle's telematics to IoT Central which is subsequently available in the Support Portal. Typically this is a phone acting as a gateway and is run on the driver's mobile phone or an internet accessible device.
 
-* __The IoT Central application(s).__ The main experience to manage the Contoso-Drive devices and admin level tasks for Contoso-Drive. It is typically used by the technician/support person and other privileged persons to perform admin level device management, insights and actions. Visit [this](https://github.com/iot-for-all/contoso-drive-learning) repo to see the Learning Path on how to set up the Contoso-Drive IoT Central applications.
+* __The IoT Central application(s).__ The main experience to manage the Contoso-Drive devices and admin level tasks for Contoso-Drive. It is typically used by the technician/support person and other privileged persons to perform admin level device management, insights and actions. Visit [this](https://github.com/iot-for-all/companion-experiences-learning) repo to see the Learning Path on how to set up the Contoso-Drive IoT Central applications.
 
 __This repo represents the Driver App scenario.__ 
 
@@ -88,7 +91,7 @@ The app does not remember its previous run state. Every restart or F5 press will
 
 ## Using a custom simulator
 
-Because the driver app is just a device that uses regular Azure IoT Hub conventions, any simulator that knows the device's model can perform the D2C/C2D activities. Review the code to understand the capabilities that need to be implemented. Optionally, the [Learning Path](https://github.com/iot-for-all/contoso-drive-learning) outlines how to use [mock-devices](https://github.com/codetunez/mock-devices) to provide better scaled simulation data without the need for user credentials.
+Because the driver app is just a device that uses regular Azure IoT Hub conventions, any simulator that knows the device's model can perform the D2C/C2D activities. Review the code to understand the capabilities that need to be implemented. Optionally, the [Learning Path](https://github.com/iot-for-all/companion-experiences-learning) outlines how to use [mock-devices](https://github.com/codetunez/mock-devices) to provide better scaled simulation data without the need for user credentials.
 
 # Installing, building and running the codebase
 
