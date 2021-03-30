@@ -58,7 +58,7 @@ function getDeviceDreds(applicationHost, deviceId, accessToken) {
 export const msalConfig = {
   auth: {
     clientId: Config.AADClientID,
-    authority: 'https://login.microsoftonline.com/' + Config.AADDirectoryID,
+    authority: Config.AADLoginServer + '/' + Config.AADDirectoryID,
     redirectUri: Config.AADRedirectURI
   },
   cache: {
