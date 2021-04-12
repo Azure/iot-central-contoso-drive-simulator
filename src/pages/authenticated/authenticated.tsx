@@ -112,11 +112,11 @@ function Page({ authContext, deviceContext, data, causeError }) {
 
         <div className='info-bar'>
             <div>
-                <span>{RESX.auth.info.device}</span>
+                <span>{RESX.auth.info.device}</span><br/>
                 <span>{deviceContext.device.deviceId}</span>
             </div>
             <div>
-                <span>{RESX.auth.info.host}</span>
+                <span>{RESX.auth.info.host}</span><br/>
                 <span>{authContext.applicationHost}</span>
             </div>
         </div>

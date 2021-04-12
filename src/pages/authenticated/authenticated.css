@@ -104,7 +104,7 @@
 }
 
 .message {
-    margin-top: 1.4rem;
+    margin-top: 1.3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -138,13 +138,17 @@
 }
 
 .info-bar {
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
+}
+
+.info-bar div {
+    text-align: center;
 }
 
 .info-bar span:first-child {
@@ -156,7 +160,7 @@
 }
 
 .menu-bar {
-    margin-top: 2rem;
+    margin-top: 1.4rem;
     display: flex;
     justify-content: space-evenly;
 }
